@@ -1,0 +1,18 @@
+package {
+    default_applicable_licenses: ["uwu-pinyin-heaven_license"],
+}
+
+license {
+    name: "uwu-pinyin-heaven_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["SPDX-license-identifier-Apache-2.0"],
+    license_text: ["LICENSE"],
+}
+
+java_import {
+    name: "uwu-pinyin-heaven",
+    jars: ["heaven-0.2.0.jar"],
+    sdk_version: "current",
+    min_sdk_version: "26",
+    visibility: ["//uwu-sdk/uwuPinyin:__pkg__"],
+}

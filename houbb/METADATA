@@ -1,0 +1,9 @@
+name: "houbb-heaven"
+description: "Runtime dependency of houbb/pinyin; upstream source requires JDK-only APIs"
+third_party {
+  url { type: HOMEPAGE value: "https://github.com/houbb/heaven" }
+  url { type: ARCHIVE value: "https://repo.maven.apache.org/maven2/com/github/houbb/heaven/0.2.0/heaven-0.2.0.jar" }
+  version: "0.2.0"
+  license_type: NOTICE
+  last_upgrade_date { year: 2026 month: 10 day: 11 }
+}
