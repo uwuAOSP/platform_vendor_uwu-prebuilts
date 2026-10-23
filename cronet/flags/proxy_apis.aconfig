@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+package: "android.net.http"
+container: "com.android.tethering"
+
+flag {
+  name: "proxy_apis"
+  namespace: "android_core_networking"
+  description: "Guards the new Proxy APIs."
+  bug: "421175342"
+  is_exported: true
+}
