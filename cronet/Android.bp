@@ -1,0 +1,145 @@
+/*
+ * SPDX-FileCopyrightText: The uwuAOSP Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package {
+    default_applicable_licenses: ["uwu_cronet_license"],
+}
+
+license {
+    name: "uwu_cronet_license",
+    license_kinds: [
+        "SPDX-license-identifier-Apache-2.0",
+        "SPDX-license-identifier-BSD",
+        "SPDX-license-identifier-BSD-3-Clause",
+        "SPDX-license-identifier-BSD-Source-Code",
+        "SPDX-license-identifier-BSD-2-Clause",
+        "SPDX-license-identifier-BSD-4-Clause",
+        "SPDX-license-identifier-BSL-1.0",
+        "SPDX-license-identifier-MIT",
+        "SPDX-license-identifier-ISC",
+        "SPDX-license-identifier-ICU",
+        "SPDX-license-identifier-MPL",
+        "SPDX-license-identifier-MPL-1.1",
+        "SPDX-license-identifier-MPL-2.0",
+        "SPDX-license-identifier-NCSA",
+        "SPDX-license-identifier-OpenSSL",
+        "SPDX-license-identifier-Unicode-DFS-2016",
+        "SPDX-license-identifier-Zlib",
+        "legacy_unencumbered",
+    ],
+    license_text: ["LICENSE"],
+}
+
+cc_prebuilt_library_shared {
+    name: "stable_cronet_components_cronet_android_cronet",
+    stem: "libhttpengine",
+    compile_multilib: "both",
+    arch: {
+        arm: {
+            srcs: ["arm/libhttpengine.so"],
+        },
+        arm64: {
+            srcs: ["arm64/libhttpengine.so"],
+        },
+    },
+    shared_libs: [
+        "libandroid",
+        "libbinder_ndk",
+        "liblog",
+        "libmediandk",
+        "libz",
+        "stable_cronet_libcrypto",
+    ],
+    min_sdk_version: "30",
+    apex_available: ["com.android.tethering"],
+}
+
+cc_prebuilt_library_shared {
+    name: "stable_cronet_libcrypto",
+    stem: "libcrypto_httpengine",
+    compile_multilib: "both",
+    arch: {
+        arm: {
+            srcs: ["arm/libcrypto_httpengine.so"],
+        },
+        arm64: {
+            srcs: ["arm64/libcrypto_httpengine.so"],
+        },
+    },
+    shared_libs: ["libmediandk"],
+    min_sdk_version: "30",
+    apex_available: ["com.android.tethering"],
+}
+
+java_import {
+    name: "httpengine",
+    jars: ["java/httpengine.jar"],
+    sdk_version: "module_current",
+    min_sdk_version: "30",
+    apex_available: ["com.android.tethering"],
+}
+
+java_import {
+    name: "cronet_internal_impls_temp_shims",
+    jars: ["java/cronet_internal_impls_temp_shims.jar"],
+    sdk_version: "module_current",
+    min_sdk_version: "30",
+    apex_available: ["com.android.tethering"],
+}
+
+aconfig_declarations {
+    name: "com.android.net.http.flags-aconfig",
+    package: "android.net.http",
+    container: "com.android.tethering",
+    srcs: [
+        "flags/preload_httpengine.aconfig",
+        "flags/proxy_apis.aconfig",
+    ],
+    exportable: true,
+}
+
+java_aconfig_library {
+    name: "com.android.net.http.flags-aconfig-java",
+    aconfig_declarations: "com.android.net.http.flags-aconfig",
+    defaults: ["framework-minus-apex-aconfig-java-defaults"],
+    apex_available: ["com.android.tethering"],
+    min_sdk_version: "30",
+}
+
+java_aconfig_library {
+    name: "com.android.net.http.flags-aconfig-exported-java",
+    aconfig_declarations: "com.android.net.http.flags-aconfig",
+    defaults: ["framework-minus-apex-aconfig-java-defaults"],
+    apex_available: ["//apex_available:platform"],
+    min_sdk_version: "30",
+}
+
+filegroup {
+    name: "uwu_cronet_httpengine_api_sources",
+    srcs: ["api/src/android/net/http/*.java"],
+    visibility: ["//packages/modules/Connectivity:__subpackages__"],
+}
+
+java_defaults {
+    name: "httpengine_java_defaults",
+    api_srcs: [":uwu_cronet_httpengine_api_sources"],
+    static_libs: ["com.android.net.http.flags-aconfig-java"],
+    libs: [
+        "androidx.annotation_annotation",
+        "framework-sdkextensions.stubs.module_lib",
+    ],
+    impl_only_static_libs: [
+        "httpengine",
+        "cronet_internal_impls_temp_shims",
+    ],
+}
+
+apex_defaults {
+    name: "CronetInTetheringApexDefaults",
+    jni_libs: [
+        "stable_cronet_components_cronet_android_cronet",
+        "stable_cronet_libcrypto",
+    ],
+}
