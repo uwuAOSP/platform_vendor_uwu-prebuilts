@@ -74,11 +74,30 @@ cc_prebuilt_library_shared {
 }
 
 java_import {
-    name: "httpengine",
+    name: "uwu_cronet_httpengine_jar",
     jars: ["java/httpengine.jar"],
     sdk_version: "module_current",
     min_sdk_version: "30",
     apex_available: ["com.android.tethering"],
+}
+
+java_library {
+    name: "httpengine",
+    static_libs: ["uwu_cronet_httpengine_jar"],
+    sdk_version: "module_current",
+    min_sdk_version: "30",
+    apex_available: ["com.android.tethering"],
+    libs: [
+        "framework-mediaprovider.stubs.module_lib",
+        "framework-sdkextensions.stubs.module_lib",
+    ] + select(release_flag("RELEASE_CONSCRYPT_NSC"), {
+        true: ["framework-conscrypt-nsc.stubs"],
+        default: ["framework-network-security-config.stubs.module_lib"],
+    }),
+    optimize: {
+        proguard_flags_files: [":uwu_cronet_httpengine_proguard_flags"],
+        export_proguard_flags_files: true,
+    },
 }
 
 java_import {
@@ -120,6 +139,11 @@ filegroup {
     name: "uwu_cronet_httpengine_api_sources",
     srcs: ["api/src/android/net/http/*.java"],
     visibility: ["//packages/modules/Connectivity:__subpackages__"],
+}
+
+filegroup {
+    name: "uwu_cronet_httpengine_proguard_flags",
+    srcs: ["proguard/httpengine_combined_proguard_golden.cfg"],
 }
 
 java_defaults {
